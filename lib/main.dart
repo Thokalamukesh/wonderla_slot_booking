@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 void main() => runApp(const SlotBookingApp());
 
@@ -133,7 +132,36 @@ class _Header extends StatelessWidget {
   const _Header({required this.step, this.onBack});
   final int step; final VoidCallback? onBack;
   @override
-  Widget build(BuildContext context) => Container(color: Colors.white, padding: const EdgeInsets.fromLTRB(18, 10, 18, 13), child: Column(children: [Row(children: [if (onBack != null) IconButton(onPressed: onBack, icon: const Icon(Icons.arrow_back_ios_new, size: 19, color: muted)) else const SizedBox(width: 48), const Spacer(), Column(children: [const Text('WONDERLA', style: TextStyle(color: Color(0xFFE5B928), fontSize: 20, fontWeight: FontWeight.w900, shadows: [Shadow(color: navy, blurRadius: 1)])), Text('PARKS AND RESORTS', style: TextStyle(color: navy, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.1))]), const Spacer(), Text(TimeOfDay.now().format(context), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: navy)), const SizedBox(width: 8)]), const SizedBox(height: 16), Row(children: List.generate(4, (i) { final done = i < step; final active = i == step; final color = done ? green : active ? blue : const Color(0xFFE8ECF2); final labels = ['Ride', 'Slot', 'Guests', 'Done']; return Expanded(child: Padding(padding: EdgeInsets.only(right: i == 3 ? 0 : 12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Container(height: 7, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(9))), const SizedBox(height: 7), Text(labels[i], style: TextStyle(color: done ? green : active ? blue : const Color(0xFF9AA6B5), fontSize: 14, fontWeight: FontWeight.w800))]))); }))]));
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).width < 380;
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(compact ? 10 : 18, 6, compact ? 10 : 18, 12),
+      child: Column(children: [
+        SizedBox(
+          height: 58,
+          child: Row(children: [
+            SizedBox(width: compact ? 38 : 48, child: onBack == null ? null : IconButton(onPressed: onBack, padding: EdgeInsets.zero, icon: const Icon(Icons.arrow_back_ios_new, size: 19, color: muted))),
+            const Spacer(),
+            Image.asset('assets/wonderla_logo.webp', width: compact ? 112 : 136, height: 54, fit: BoxFit.contain),
+            const Spacer(),
+            SizedBox(width: compact ? 50 : 70, child: Align(alignment: Alignment.centerRight, child: Text(TimeOfDay.now().format(context), maxLines: 1, style: TextStyle(fontSize: compact ? 13 : 17, fontWeight: FontWeight.w800, color: navy)))),
+          ]),
+        ),
+        const SizedBox(height: 10),
+        Row(children: List.generate(4, (i) {
+          final done = i < step; final active = i == step;
+          final color = done ? green : active ? blue : const Color(0xFFE8ECF2);
+          final labels = ['Ride', 'Slot', 'Guests', 'Done'];
+          return Expanded(child: Padding(padding: EdgeInsets.only(right: i == 3 ? 0 : (compact ? 7 : 12)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(height: 7, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(9))),
+            const SizedBox(height: 7),
+            Text(labels[i], style: TextStyle(color: done ? green : active ? blue : const Color(0xFF9AA6B5), fontSize: compact ? 12 : 14, fontWeight: FontWeight.w800)),
+          ])));
+        })),
+      ]),
+    );
+  }
 }
 
 class _RideCard extends StatelessWidget {
